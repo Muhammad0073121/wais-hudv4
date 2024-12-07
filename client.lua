@@ -50,13 +50,20 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
 end)
 
 RegisterNetEvent("QBCore:Client:OnPlayerUnload", function()
-    PlayerData = {}
+	PlayerData = {}
 end)
 
 RegisterNetEvent("QBCore:Player:SetPlayerData", function(val)
-    PlayerData = val
+	PlayerData = val
 	if Config.CashItem then
 		Wait(1000)
+		SendNUIMessage({
+			type = "UPDATE_MONEY",
+			cash = PlayerData.money['cash'],
+			bank = PlayerData.money['bank'],
+			cashItem = false,
+			-- cashItem = Config.CashItem,
+		})
 		SendNUIMessage({
 			type = "UPDATE_MONEY_3",
 			cash = exports.ox_inventory:Search('count', 'black_money')
@@ -68,7 +75,6 @@ RegisterNetEvent("QBCore:Player:SetPlayerData", function(val)
 		job = PlayerData.gang.name,
 		grade = PlayerData.gang.grade.name,
 	})
-
 end)
 
 
@@ -76,7 +82,7 @@ end)
 
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
-    PlayerJob = JobInfo
+	PlayerJob = JobInfo
 	Wait(1000)
 	SendNUIMessage({
 		type  = "UPDATE_JOB",
@@ -91,12 +97,12 @@ RegisterNetEvent('hud:client:UpdateNeeds', function(newHunger, newThirst)
 end)
 
 RegisterNetEvent('hud:client:UpdateStress', function(newStress)
-    stress = newStress
+	stress = newStress
 end)
 
 RegisterNetEvent('pma-voice:setTalkingMode', function(ranges)
 	SendNUIMessage({
-		type  = "UPDATE_MIC_DISTANCE",
+		type     = "UPDATE_MIC_DISTANCE",
 		distance = Config.PmaRange[ranges][2]
 	})
 end)
@@ -149,7 +155,6 @@ RegisterNetEvent('wais:notification', function(text, type, duration)
 		types = type,
 		duration = duration,
 	})
-	
 end)
 
 RegisterNetEvent('wais:hudHide', function(boolean)
@@ -165,7 +170,7 @@ RegisterNetEvent('wais:hideRadar', function(boolean)
 end)
 
 RegisterNetEvent('SaltyChat_TalkStateChanged', function(status)
-    SendNUIMessage({
+	SendNUIMessage({
 		type  = 'UPDATE_MIC',
 		state = status,
 		radio = inRadioTalking
@@ -178,7 +183,7 @@ end)
 
 RegisterNetEvent('SaltyChat_VoiceRangeChanged', function(range)
 	SendNUIMessage({
-		type  = "UPDATE_MIC_DISTANCE",
+		type     = "UPDATE_MIC_DISTANCE",
 		distance = Config.SaltychatRange[tostring(range)][2],
 	})
 end)
@@ -275,7 +280,7 @@ function playerLoadFunction()
 		job   = PlayerData.gang.name,
 		grade = PlayerData.gang.grade.name,
 	})
-	
+
 	hunger = PlayerData.metadata['hunger']
 	thirst = PlayerData.metadata['thirst']
 	stress = PlayerData.metadata['stress']
@@ -296,16 +301,16 @@ function playerLoadFunction()
 end
 
 function ragdollP()
-    if not belt then 
+	if not belt then
 		playerPed = PlayerPedId()
-        local position = GetEntityCoords(playerPed)
-        SetEntityCoords(playerPed, position.x, position.y, position.z - 0.47, true, true, true)
-        SetEntityVelocity(playerPed, prevVelocity.x, prevVelocity.y, prevVelocity.z)
-        Citizen.Wait(1)
-        SetPedToRagdoll(playerPed, 1000, 1000, 0, 0, 0, 0)
-        Citizen.Wait(1000)
-        if math.random(1, 3) == 1 then SetEntityHealth(playerPed, 0) end
-    end
+		local position = GetEntityCoords(playerPed)
+		SetEntityCoords(playerPed, position.x, position.y, position.z - 0.47, true, true, true)
+		SetEntityVelocity(playerPed, prevVelocity.x, prevVelocity.y, prevVelocity.z)
+		Citizen.Wait(1)
+		SetPedToRagdoll(playerPed, 1000, 1000, 0, 0, 0, 0)
+		Citizen.Wait(1000)
+		if math.random(1, 3) == 1 then SetEntityHealth(playerPed, 0) end
+	end
 end
 
 function loadKeybinds()
@@ -325,7 +330,7 @@ function loadKeybinds()
 	end
 end
 
-function loadDefaultMap() 
+function loadDefaultMap()
 	RequestStreamedTextureDict("squaremap", false)
 	if not HasStreamedTextureDictLoaded("squaremap") then
 		Wait(150)
@@ -371,10 +376,10 @@ function reBuildMap()
 		-- 0.1638 = nav symbol and icons stretched
 		-- 0.216 = nav symbol and icons raised up
 		SetMinimapComponentPosition("minimap", "L", "B", 0.0, -0.007, 0.1638, 0.183)
-	
+
 		-- icons within map
 		SetMinimapComponentPosition("minimap_mask", "L", "B", 0.0, 0.0, 0.128, 0.20)
-	
+
 		-- -0.01 = map pulled left
 		-- 0.025 = map raised up
 		-- 0.262 = map stretched
@@ -438,7 +443,6 @@ function reBuildMap()
 		-- Wait(50)
 		-- SetRadarBigmapEnabled(false, false)
 	end
-
 end
 
 function hasBlackListVehicle(hash)
@@ -495,7 +499,7 @@ RegisterCommand('speedlimiter', function()
 						end
 					else
 						speedlimiter = false
-						maxSpeed = GetVehicleHandlingFloat(vehicle,"CHandlingData","fInitialDriveMaxFlatVel")
+						maxSpeed = GetVehicleHandlingFloat(vehicle, "CHandlingData", "fInitialDriveMaxFlatVel")
 						SetEntityMaxSpeed(vehicle, maxSpeed)
 					end
 				end
@@ -534,6 +538,7 @@ end)
 -----------------------------------------------------------------------------------------
 -- THREAD'S --
 -----------------------------------------------------------------------------------------
+InformedAboutFood = false
 
 CreateThread(function()
 	while true do
@@ -542,8 +547,8 @@ CreateThread(function()
 		local maxHealth = GetEntityMaxHealth(ped)
 		local heal = maxHealth == 175 and (GetEntityHealth(ped) + 25) - 100 or GetEntityHealth(ped) - 100
 		local armour = GetPedArmour(ped)
-        local sleep = Config.RefreshTime
-        local pos = GetEntityCoords(ped)
+		local sleep = Config.RefreshTime
+		local pos = GetEntityCoords(ped)
 
 		if playerLoaded then
 			if not IsPauseMenuActive() then
@@ -559,16 +564,17 @@ CreateThread(function()
 					local door = false
 					local veh = GetVehiclePedIsIn(ped, false)
 					if not hasBlackListVehicle(GetEntityModel(veh)) then
-						local gear = GetVehicleCurrentGear(veh)
-						local speed = GetEntitySpeed(veh)
-						local damage  = GetVehicleEngineHealth(veh)
-						local hbreake = GetVehicleHandbrake(veh)
-						local _,lightson,highbeams = GetVehicleLightsState(veh)
-						local fuel    = GetVehicleFuelLevel(veh)
-						local engine  = GetIsVehicleEngineRunning(veh)
-						local rpm     = GetVehicleCurrentRpm(veh)
-						defSpeed = GetVehicleHandlingFloat(veh,"CHandlingData","fInitialDriveMaxFlatVel")
-						
+						local gear                   = GetVehicleCurrentGear(veh)
+						local speed                  = GetEntitySpeed(veh)
+						local damage                 = GetVehicleEngineHealth(veh)
+						local hbreake                = GetVehicleHandbrake(veh)
+						local _, lightson, highbeams = GetVehicleLightsState(veh)
+						local fuel                   = GetVehicleFuelLevel(veh)
+						local engine                 = GetIsVehicleEngineRunning(veh)
+						local rpm                    = GetVehicleCurrentRpm(veh)
+						defSpeed                     = GetVehicleHandlingFloat(veh, "CHandlingData",
+							"fInitialDriveMaxFlatVel")
+
 						if lightson == 1 then
 							lightState = true
 						elseif highbeams == 1 then
@@ -614,18 +620,18 @@ CreateThread(function()
 							hbreake = hbreake,
 							limiter = speedlimiter,
 							damage  = damage,
-							rpm 	= rpm,
+							rpm     = rpm,
 							maxGear = GetVehicleHighGear(veh),
-							fuel 	= fuel,
+							fuel    = fuel,
 						})
 
 						fs = cs
-						cs =  speed
+						cs = speed
 						mfwd = GetEntitySpeedVector(veh, true).y > 1.0
 						vhfr = (fs - cs) / GetFrameTime() > 981
-						
+
 						if not belt then
-							if mfwd and fs*3.6 > 80 and vhfr then
+							if mfwd and fs * 3.6 > 80 and vhfr then
 								ragdollP()
 							else
 								prevVelocity = GetEntityVelocity(veh)
@@ -655,17 +661,36 @@ CreateThread(function()
 				end
 
 				SendNUIMessage({
-					type 	= "UPDATE_STATUS",
-					heal    = heal,
-					armour  = armour,
-					hunger  = hunger,
-					thirst  = thirst,
-                    stamina = stamina,
-                    weather = IsEntityInWater(ped),
+					type        = "UPDATE_STATUS",
+					heal        = heal,
+					armour      = armour,
+					hunger      = hunger,
+					thirst      = thirst,
+					stamina     = stamina,
+					weather     = IsEntityInWater(ped),
 					streetTitle = GetStreetNameFromHashKey(street1),
-					streetName = GetStreetNameFromHashKey(street2),
-					stress = stress
+					streetName  = GetStreetNameFromHashKey(street2),
+					stress      = stress
 				})
+
+
+
+				if ((hunger <= 10 and hunger ~= 0) or (thirst <= 10 and thirst ~= 0)) and not InformedAboutFood then
+					if hunger <= 10 and thirst <= 10 then
+						TriggerEvent('QBCore:Notify', 'You are starving and thirsty', 'error')
+					elseif hunger <= 10 then
+						TriggerEvent('QBCore:Notify', 'You are starving', 'error')
+					elseif thirst <= 10 then
+						TriggerEvent('QBCore:Notify', 'You are thirsty', 'error')
+					else
+						TriggerEvent('QBCore:Notify', 'You are starving or thirsty', 'error')
+					end
+					InformedAboutFood = true
+					CreateThread(function()
+						Wait(1000 * 10)
+						InformedAboutFood = false
+					end)
+				end
 
 				SendNUIMessage({
 					type = "UPDATE_WEAPON",
@@ -724,7 +749,6 @@ end)
 
 CreateThread(function()
 	while true do
-
 		if hideAmmoCounts then
 			HideHudComponentThisFrame(2)
 		end
@@ -752,4 +776,30 @@ CreateThread(function()
 
 		Wait(1)
 	end
+end)
+
+
+-- qb-robbery/client.lua
+local robberyStatus = false
+
+-- Function to handle robbery status update
+RegisterNetEvent('qb-robbery:statusChanged', function(newStatus)
+	robberyStatus = newStatus
+	SendNUIMessage({
+		type  = 'UPDATE_ROBBERY_STATUS',
+		state = robberyStatus
+	})
+	-- Add any client-side logic when the robbery status changes here
+end)
+
+-- Request the robbery status on player load
+AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+	QBCore.Functions.TriggerCallback('qb-robbery:getRobberyStatus', function(serverStatus)
+		robberyStatus = serverStatus
+		SendNUIMessage({
+			type  = 'UPDATE_ROBBERY_STATUS',
+			state = robberyStatus
+		})
+		-- Add any additional logic after loading the status here
+	end)
 end)

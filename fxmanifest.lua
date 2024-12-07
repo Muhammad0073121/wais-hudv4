@@ -1,13 +1,13 @@
 fx_version 'bodacious'
 game 'gta5'
 
---[[ Resource Information ]]--
+--[[ Resource Information ]] --
 
 Author 'Ayazwai#3900'
 version '1.0.3'
-scriptname 'wais-hudv4-qb'
+scriptname 'wais-hudv4'
 
---[[ Resource Information ]]--
+--[[ Resource Information ]] --
 
 client_scripts {
     'config.lua',
@@ -18,6 +18,7 @@ server_scripts {
     'config.lua',
     'server.lua'
 }
+
 
 ui_page "html/index.html"
 

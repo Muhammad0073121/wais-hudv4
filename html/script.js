@@ -15,6 +15,7 @@ let hideHightGear = false;
 let beltState = false;
 let changedStamina = false;
 let clockType;
+let robberyStatus = false;
 let stressHided = false;
 
 let sound;
@@ -305,6 +306,15 @@ window.addEventListener("message", function (event) {
       break;
     case "CLOK_TYPE":
       clockType = e.clock;
+      break;
+    case "UPDATE_ROBBERY_STATUS":
+      robberyStatus = e.state;
+      const statusIndicator = document.getElementById("status-indicator");
+      if (robberyStatus) {
+        statusIndicator.style.background = "red";
+      } else {
+        statusIndicator.style.background = "green";
+      }
       break;
     default:
       break;
@@ -880,7 +890,6 @@ function updateVehicleStatus(
   );
 
   if (!belt) {
-    beltAlarm();
     if (!beltState) {
       beltState = true;
       $("#belt").attr("data-state", "false");
@@ -1621,13 +1630,4 @@ function loadKeybinds(list) {
   }
 }
 
-function beltAlarm() {
-  if (!beltstates && !alarm && playerInCar) {
-    alarm = true;
-    sound.play();
-    setTimeout(() => {
-      alarm = false;
-      beltAlarm();
-    }, 2500);
-  }
-}
+function beltAlarm() {}

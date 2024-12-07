@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css' crossorigin='anonymous' />
-    <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro-v6@18657a9/css/all.min.css" rel="stylesheet" type="text/css" />
+    <!-- <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css' crossorigin='anonymous' />
+    <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro-v6@18657a9/css/all.min.css" rel="stylesheet" type="text/css" /> -->
+    <script src="https://kit.fontawesome.com/f9080ec715.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> <!-- JQuery -->
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
@@ -539,6 +540,25 @@
                 <span>Reset</span>
             </div>
         </div>
+    </div>
+    <div id="robbery-status" style="
+        position: fixed; 
+        bottom: 30px; 
+        right: 20px; 
+        background: rgba(0, 0, 0, 0.7); 
+        color: #fff; 
+        padding: 10px 15px; 
+        border-radius: 8px; 
+        display: flex; 
+        align-items: center; 
+        gap: 10px; 
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);">
+        <span>Robbery Status:</span>
+        <div id="status-indicator" style="
+            width: 15px; 
+            height: 15px; 
+            border-radius: 50%; 
+            background: green;"></div>
     </div>
 
     <script src="progressbar.js"></script>
